@@ -10,7 +10,7 @@
             "bin": [
                 [
                     "wireport-windows-amd64.exe",
-                    "wireport.exe"
+                    "wireport"
                 ]
             ]
         },
@@ -20,7 +20,7 @@
             "bin": [
                 [
                     "wireport-windows-arm64.exe",
-                    "wireport.exe"
+                    "wireport"
                 ]
             ]
         }
