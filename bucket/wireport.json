@@ -13,15 +13,13 @@
             "hash": "541071350cf25e6b7fd7c4e3deb2ebfa4bef6fab5fd187bbe107a59f0a5a34fe"
         }
     },
-    "bin": [
-        [
-            "wireport-windows-amd64.exe",
-            "wireport.exe"
-        ],
-        [
-            "wireport-windows-arm64.exe",
-            "wireport.exe"
-        ]
+    "bin": "wireport.exe",
+    "post_install": [
+        "if (Test-Path \"$dir\\wireport-windows-amd64.exe\") {",
+        "    Move-Item \"$dir\\wireport-windows-amd64.exe\" \"$dir\\wireport.exe\"",
+        "} elseif (Test-Path \"$dir\\wireport-windows-arm64.exe\") {",
+        "    Move-Item \"$dir\\wireport-windows-arm64.exe\" \"$dir\\wireport.exe\"",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/MultionLabs/wireport"
