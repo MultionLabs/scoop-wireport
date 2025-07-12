@@ -1,0 +1,65 @@
+name: Auto-update Scoop bucket from Upstream Release
+
+on:
+  repository_dispatch:
+    types: [update-bucket]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (e.g. '0.9.1') – required when run manually"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  RELEASE_REPO: MultionLabs/wireport
+
+jobs:
+  update-bucket:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event.client_payload.version || github.event.inputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update -y && sudo apt-get install -y jq gettext-base
+
+      - name: Download assets & compute SHAs
+        id: shas
+        shell: bash
+        run: |
+          set -euo pipefail
+          V="$VERSION"
+          BASE="https://github.com/${RELEASE_REPO}/releases/download/v${V}"
+
+          curl -sSL -o win-amd64.zip "${BASE}/wireport-windows-amd64.zip"
+          curl -sSL -o win-arm64.zip "${BASE}/wireport-windows-arm64.zip"
+
+          SHA_AMD64=$(sha256sum win-amd64.zip | awk '{print $1}')
+          SHA_ARM64=$(sha256sum win-arm64.zip | awk '{print $1}')
+
+          echo "sha_amd64=$SHA_AMD64" >> "$GITHUB_OUTPUT"
+          echo "sha_arm64=$SHA_ARM64" >> "$GITHUB_OUTPUT"
+
+      - name: Generate manifest from template
+        shell: bash
+        env:
+          V: ${{ env.VERSION }}
+          SHA_AMD64: ${{ steps.shas.outputs.sha_amd64 }}
+          SHA_ARM64: ${{ steps.shas.outputs.sha_arm64 }}
+        run: |
+          export V SHA_AMD64 SHA_ARM64
+          envsubst '${V} ${SHA_AMD64} ${SHA_ARM64}' < wireport.json.template > bucket/wireport.json
+          cp bucket/wireport.json "bucket/wireport@${V}.json"
+
+      - name: Commit & push changes
+        shell: bash
+        run: |
+          git config user.name "wireport-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add bucket/wireport.json bucket/wireport@${VERSION}.json
+          git commit -m "chore: bump wireport to v${VERSION}" || echo "No changes to commit"
+          git push origin HEAD
