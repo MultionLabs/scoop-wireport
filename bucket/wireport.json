@@ -6,7 +6,7 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/MultionLabs/wireport/releases/download/v0.9.5/wireport-windows-amd64.zip",
-            "hash": "e3f97ade2aaab6528dfd7c541745205839f237830b3d74d18cd3e0da718b5a7b",
+            "hash": "28b780cccc885cf4b6852464c90eb66cf1bc11a3bad7a3c049c114161e53489f",
             "bin": [
                 [
                     "wireport-windows-amd64.exe",
@@ -16,7 +16,7 @@
         },
         "arm64": {
             "url": "https://github.com/MultionLabs/wireport/releases/download/v0.9.5/wireport-windows-arm64.zip",
-            "hash": "e93bf72f5fa7c4fa91f8620e80c374a648f136313de0505170662cf544832b15",
+            "hash": "fa90872af14d888b965fe7fa69e2d1d74b84e407ba9cee47512b7b0ede11759b",
             "bin": [
                 [
                     "wireport-windows-arm64.exe",
